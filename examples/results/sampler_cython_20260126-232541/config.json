@@ -1,0 +1,22 @@
+{
+  "chains": 2,
+  "cores": 2,
+  "data_path": "/oscar/data/frankmj/azhang/efficient-fpt/examples/example4_new/addm_data_20251015-163921.pkl",
+  "draws": 500,
+  "env": {
+    "JAX_PLATFORM_NAME": null,
+    "XLA_PYTHON_CLIENT_ALLOCATOR": null,
+    "XLA_PYTHON_CLIENT_PREALLOCATE": null
+  },
+  "hostname": "node2340.oscar.ccv.brown.edu",
+  "jax_version": "0.8.2",
+  "mode": "cython",
+  "mp_ctx": "spawn",
+  "num_threads": 8,
+  "num_trials": 500,
+  "pymc_version": "5.27.0",
+  "random_seed": 42,
+  "timestamp": "2026-01-26T23:25:41.236230",
+  "trunc_num": 6,
+  "tune": 200
+}

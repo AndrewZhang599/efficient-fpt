@@ -1,0 +1,8 @@
+{
+  "jax": {
+    "idata": "/oscar/data/frankmj/azhang/efficient-fpt/examples/results/sampler_jax_20260126-233203/idata_jax.nc",
+    "sampling_seconds": 6872.759787088027,
+    "time_per_draw_ms": 3436.3798935440136,
+    "warmup_compile_seconds": 29.796456892043352
+  }
+}

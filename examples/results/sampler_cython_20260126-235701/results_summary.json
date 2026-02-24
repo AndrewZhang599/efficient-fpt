@@ -1,0 +1,7 @@
+{
+  "cython": {
+    "idata": "/oscar/data/frankmj/azhang/efficient-fpt/examples/results/sampler_cython_20260126-235701/idata_cython.nc",
+    "sampling_seconds": 4316.792612191057,
+    "time_per_draw_ms": 2158.3963060955284
+  }
+}
