@@ -8,7 +8,7 @@
 #SBATCH --gpus=2
 #SBATCH --mem=32GB
 #SBATCH --time=12:00:00
-#SBATCH --array=0-99
+#SBATCH --array=0-150
 #SBATCH --partition=gpu
 #SBATCH --account=carney-frankmj-condo
 
@@ -18,12 +18,12 @@
 # Usage: sbatch param_recovery.sbatch
 
 # Configuration
-OUTPUT_DIR="/users/azhan378/scratch/param_recovery_a_simulate_2"
+OUTPUT_DIR="/users/azhan378/scratch/param_recovery_x0_simulate_150"
 BASE_SEED=42
 SCRIPT_PATH="${SLURM_SUBMIT_DIR}/param_recovery_main.py"
 
 # Create logs directory
-mkdir -p "/users/azhan378/scratch/logs/param_sets_a_simulate_2"
+mkdir -p "/users/azhan378/scratch/logs/param_sets_x0_simulate_150"
 mkdir -p "${OUTPUT_DIR}"
 
 # Get simulation ID from array index
@@ -56,10 +56,10 @@ ETA_CONST=0.3
 SIMULATE_KAPPA=FALSE
 KAPPA_CONST=0.5
 
-SIMULATE_A=TRUE
+SIMULATE_A=FALSE
 A_CONST=2.0
 
-SIMULATE_X0=FALSE
+SIMULATE_X0=TRUE
 X0_CONST=0.5
 
 # Run the parameter recovery simulation
