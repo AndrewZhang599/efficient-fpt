@@ -42,8 +42,6 @@ echo "Output Directory: $OUTPUT_DIR"
 echo "CUDA Visible Devices: $CUDA_VISIBLE_DEVICES"
 echo "==============================================="
 
-# Activate virtual environment
-# source /users/azhan378/hssm_oscar_uv/bin/activate
 
 # Set JAX to use both GPUs
 export JAX_PLATFORM_NAME=gpu
