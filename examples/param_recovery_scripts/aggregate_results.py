@@ -70,10 +70,10 @@ def aggregate_results(input_dir: Path) -> Dict[str, Any]:
         for param, value in result['true_params'].items():
             row[f'true_{param}'] = value
         
-        # Add TADA posterior means and HDI
-        for param, value in result['tada_posterior'].items():
-            row[f'tada_{param}'] = value
-        
+        # Add Angle posterior means and HDI
+        for param, value in result.get('angle_posterior', {}).items():
+            row[f'angle_{param}'] = value
+
         # Add aDDM posterior means and HDI
         for param, value in result['addm_posterior'].items():
             row[f'addm_{param}'] = value
@@ -87,19 +87,21 @@ def aggregate_results(input_dir: Path) -> Dict[str, Any]:
     summary_df = pd.DataFrame(rows)
     
     # Calculate recovery errors for easier plotting
-    params_to_recover = ['eta', 'kappa', 'a', 'x0']
-    
+    params_to_recover = ['eta', 'kappa', 'a', 'b', 'theta', 'x0']
+
     for param in params_to_recover:
         true_col = f'true_{param}'
-        
-        if f'tada_{param}' in summary_df.columns:
-            summary_df[f'tada_{param}_error'] = summary_df[f'tada_{param}'] - summary_df[true_col]
-            summary_df[f'tada_{param}_rel_error'] = (summary_df[f'tada_{param}_error'] / 
+        if true_col not in summary_df.columns:
+            continue
+
+        if f'angle_{param}' in summary_df.columns:
+            summary_df[f'angle_{param}_error'] = summary_df[f'angle_{param}'] - summary_df[true_col]
+            summary_df[f'angle_{param}_rel_error'] = (summary_df[f'angle_{param}_error'] /
                                                      summary_df[true_col].replace(0, np.nan))
-        
+
         if f'addm_{param}' in summary_df.columns:
             summary_df[f'addm_{param}_error'] = summary_df[f'addm_{param}'] - summary_df[true_col]
-            summary_df[f'addm_{param}_rel_error'] = (summary_df[f'addm_{param}_error'] / 
+            summary_df[f'addm_{param}_rel_error'] = (summary_df[f'addm_{param}_error'] /
                                                      summary_df[true_col].replace(0, np.nan))
     
     # Create aggregated result dictionary
@@ -129,18 +131,21 @@ def print_summary_statistics(results: Dict[str, Any]) -> None:
     print(f"\nTotal simulations: {len(df)}")
     
     for param in params:
+        true_col = f'true_{param}'
+        if true_col not in df.columns:
+            continue
         print(f"\n{param.upper()} recovery:")
-        print(f"  True parameters - Mean: {df[f'true_{param}'].mean():.4f}, "
-              f"Std: {df[f'true_{param}'].std():.4f}")
-        
-        if f'tada_{param}' in df.columns:
-            print(f"  TADA recovered  - Mean: {df[f'tada_{param}'].mean():.4f}, "
-                  f"Std: {df[f'tada_{param}'].std():.4f}")
-            if f'tada_{param}_error' in df.columns:
-                error = df[f'tada_{param}_error'].dropna()
-                print(f"  TADA error      - Mean: {error.mean():.4f}, "
+        print(f"  True parameters - Mean: {df[true_col].mean():.4f}, "
+              f"Std: {df[true_col].std():.4f}")
+
+        if f'angle_{param}' in df.columns:
+            print(f"  Angle recovered - Mean: {df[f'angle_{param}'].mean():.4f}, "
+                  f"Std: {df[f'angle_{param}'].std():.4f}")
+            if f'angle_{param}_error' in df.columns:
+                error = df[f'angle_{param}_error'].dropna()
+                print(f"  Angle error     - Mean: {error.mean():.4f}, "
                       f"Std: {error.std():.4f}, RMSE: {np.sqrt((error**2).mean()):.4f}")
-        
+
         if f'addm_{param}' in df.columns:
             print(f"  aDDM recovered  - Mean: {df[f'addm_{param}'].mean():.4f}, "
                   f"Std: {df[f'addm_{param}'].std():.4f}")
@@ -175,13 +180,13 @@ def save_results(results: Dict[str, Any], output_file: Path, csv_dir: Path = Non
     compact_cols = ['sim_id']
     for param in params:
         compact_cols.append(f'true_{param}')
-        if f'tada_{param}' in results['summary_df'].columns:
-            compact_cols.append(f'tada_{param}')
+        if f'angle_{param}' in results['summary_df'].columns:
+            compact_cols.append(f'angle_{param}')
             # Add HDI columns if they exist
-            if f'tada_{param}_hdi_3%' in results['summary_df'].columns:
-                compact_cols.append(f'tada_{param}_hdi_3%')
-            if f'tada_{param}_hdi_97%' in results['summary_df'].columns:
-                compact_cols.append(f'tada_{param}_hdi_97%')
+            if f'angle_{param}_hdi_3%' in results['summary_df'].columns:
+                compact_cols.append(f'angle_{param}_hdi_3%')
+            if f'angle_{param}_hdi_97%' in results['summary_df'].columns:
+                compact_cols.append(f'angle_{param}_hdi_97%')
         if f'addm_{param}' in results['summary_df'].columns:
             compact_cols.append(f'addm_{param}')
             # Add HDI columns if they exist

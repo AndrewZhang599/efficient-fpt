@@ -8,7 +8,7 @@
 #SBATCH --gpus=2
 #SBATCH --mem=32GB
 #SBATCH --time=12:00:00
-#SBATCH --array=0-150
+#SBATCH --array=0
 #SBATCH --partition=gpu
 #SBATCH --account=carney-frankmj-condo
 
@@ -18,12 +18,12 @@
 # Usage: sbatch param_recovery.sbatch
 
 # Configuration
-OUTPUT_DIR="/users/azhan378/scratch/param_recovery_x0_simulate_150"
+OUTPUT_DIR="/users/azhan378/scratch/param_recovery_slope_150"
 BASE_SEED=42
-SCRIPT_PATH="${SLURM_SUBMIT_DIR}/param_recovery_main.py"
+SCRIPT_PATH="${SLURM_SUBMIT_DIR}/param_recovery_main_slope.py"
 
 # Create logs directory
-mkdir -p "/users/azhan378/scratch/logs/param_sets_x0_simulate_150"
+mkdir -p "/users/azhan378/scratch/logs/param_sets_slope_150"
 mkdir -p "${OUTPUT_DIR}"
 
 # Get simulation ID from array index
@@ -57,7 +57,10 @@ KAPPA_CONST=0.5
 SIMULATE_A=FALSE
 A_CONST=2.0
 
-SIMULATE_X0=TRUE
+SIMULATE_B=TRUE
+B_CONST=0.3
+
+SIMULATE_X0=FALSE
 X0_CONST=0.5
 
 # Run the parameter recovery simulation
@@ -71,6 +74,8 @@ python "$SCRIPT_PATH" \
     --kappa-const "$KAPPA_CONST" \
     --simulate-a "$SIMULATE_A" \
     --a-const "$A_CONST" \
+    --simulate-b "$SIMULATE_B" \
+    --b-const "$B_CONST" \
     --simulate-x0 "$SIMULATE_X0" \
     --x0-const "$X0_CONST"
 
