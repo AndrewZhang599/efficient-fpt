@@ -232,17 +232,30 @@ def simulate_addm(
         choice_all[start:end] = choice_chunk
 
     # --- Post-process: truncate sacc_data to actual RTs (vectorized) ---
+    # terminated = rt_all > 0
+    # rt_col = rt_all[:, np.newaxis]
+    # beyond_mask = (sacc_data_padded >= rt_col) & terminated[:, np.newaxis]
+    # sacc_data_padded[beyond_mask] = 0.0
+
+    # stage_indices = np.arange(max_d)[np.newaxis, :]
+    # active_before_rt = (stage_indices < d_data[:, np.newaxis]) & (
+    #     sacc_data_padded < rt_col
+    # )
+    # d_new = active_before_rt.sum(axis=1).astype(np.int32)
+    # d_data = np.where(terminated, np.maximum(d_new, 1), d_data).astype(np.int32)
+    
     terminated = rt_all > 0
     rt_col = rt_all[:, np.newaxis]
-    beyond_mask = (sacc_data_padded >= rt_col) & terminated[:, np.newaxis]
-    sacc_data_padded[beyond_mask] = 0.0
-
     stage_indices = np.arange(max_d)[np.newaxis, :]
-    active_before_rt = (stage_indices < d_data[:, np.newaxis]) & (
-        sacc_data_padded < rt_col
-    )
+
+    # Count valid stages first (sacc strictly less than rt, within original budget)
+    active_before_rt = (stage_indices < d_data[:, np.newaxis]) & (sacc_data_padded < rt_col)
     d_new = active_before_rt.sum(axis=1).astype(np.int32)
     d_data = np.where(terminated, np.maximum(d_new, 1), d_data).astype(np.int32)
+
+    # Now zero entries past the new d_data (optional, for cleanliness)
+    sacc_data_padded[~(stage_indices < d_data[:, np.newaxis])] = 0.0
+
 
     mu_data_padded = _build_mu_data_padded(
         mu1_data.astype(np.float64),
